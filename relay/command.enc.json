@@ -1,0 +1,5 @@
+{
+  "schema": "ondo.mistral.relay.empty.v1",
+  "state": "empty",
+  "note": "Kein Klartext-Prompt. Diese Datei wird nur durch verschlüsselte Relay-Kommandos ersetzt."
+}
