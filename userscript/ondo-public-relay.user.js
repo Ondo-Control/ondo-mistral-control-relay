@@ -162,7 +162,7 @@
       throw new Error('relay_content_encoding');
     }
 
-    const raw = atob(meta.content.replace(/\\s+/g, ''));
+    const raw = atob(meta.content.replace(/\s+/g, ''));
     const bytes = Uint8Array.from(raw, (c) => c.charCodeAt(0));
     const envelope = JSON.parse(new TextDecoder().decode(bytes));
     if (envelope.schema === 'ondo.mistral.relay.empty.v1') return null;
