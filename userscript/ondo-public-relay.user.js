@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.5.0
-// @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via public GitHub Raw transport.
+// @version      0.6.0
+// @description  Decrypts one-shot encrypted relay commands discovered via the public GitHub inbox.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
 // @noframes
+// @connect      github.com
 // @connect      raw.githubusercontent.com
 // @updateURL    https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/userscript/ondo-public-relay.user.js
 // @downloadURL  https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/userscript/ondo-public-relay.user.js
@@ -17,8 +18,9 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.5.0';
-  const SLOT_BASE_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/slots';
+  const VERSION = '0.6.0';
+  const INBOX_TREE_URL = 'https://github.com/Ondo-Control/ondo-mistral-control-relay/tree/main/relay/inbox';
+  const INBOX_RAW_BASE_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/inbox';
   const POLL_MS = 5000;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
   const PUBLIC_JWK_KEY = 'ondo.public.relay.public-jwk.v1';
@@ -148,27 +150,53 @@
     });
   }
 
-  async function fetchOneSlot(name) {
+  async function fetchInboxNames() {
     const r = await gmRequest({
       method: 'GET',
-      url: `${SLOT_BASE_URL}/${name}?ondo_ts=${Date.now()}`,
+      url: `${INBOX_TREE_URL}?ondo_ts=${Date.now()}`,
+      headers: {'cache-control':'no-cache, no-store, max-age=0','pragma':'no-cache'},
+    });
+    if (r.status < 200 || r.status >= 300) throw new Error(`relay_inbox_http_${r.status}`);
+    const html = String(r.responseText || r.response || '');
+    if (!html) throw new Error('relay_inbox_empty');
+
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const prefix = '/Ondo-Control/ondo-mistral-control-relay/blob/main/relay/inbox/';
+    const names = [...doc.querySelectorAll('a[href]')]
+      .map((a) => {
+        const href = String(a.getAttribute('href') || '');
+        if (!href.startsWith(prefix)) return '';
+        return decodeURIComponent(href.slice(prefix.length)).split('?')[0];
+      })
+      .filter((name) => /^[0-9]{8}T[0-9]{6}Z-[A-Za-z0-9._-]+\.enc\.json$/.test(name));
+
+    return [...new Set(names)].sort().reverse();
+  }
+
+  async function fetchInboxEnvelope(name) {
+    const r = await gmRequest({
+      method: 'GET',
+      url: `${INBOX_RAW_BASE_URL}/${encodeURIComponent(name)}?ondo_ts=${Date.now()}`,
       headers: {'cache-control':'no-cache, no-store, max-age=0','pragma':'no-cache'},
     });
     if (r.status === 404) return null;
-    if (r.status < 200 || r.status >= 300) throw new Error(`relay_slot_http_${r.status}`);
+    if (r.status < 200 || r.status >= 300) throw new Error(`relay_command_http_${r.status}`);
     const body = String(r.responseText || r.response || '').trim();
-    if (!body) return null;
+    if (!body) throw new Error('relay_command_empty');
     return JSON.parse(body);
   }
 
   async function fetchEnvelope() {
     const seen = await seenList();
-    for (const name of ['slot-0.enc.json','slot-1.enc.json','slot-2.enc.json','slot-3.enc.json','slot-4.enc.json']) {
-      const envelope = await fetchOneSlot(name);
+    const names = await fetchInboxNames();
+
+    for (const name of names.slice(0, 25)) {
+      const envelope = await fetchInboxEnvelope(name);
       if (!envelope || !envelope.command_id || seen.includes(envelope.command_id)) continue;
-      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · slot-ok · ${clip(envelope.command_id,36)}`);
+      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · inbox-ok · ${clip(envelope.command_id,36)}`);
       return envelope;
     }
+
     showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · idle`);
     return null;
   }
