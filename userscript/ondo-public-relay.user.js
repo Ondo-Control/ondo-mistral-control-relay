@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.2.0
-// @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via the GitHub Contents API.
+// @version      0.3.0
+// @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via public GitHub Raw transport.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
 // @noframes
-// @connect      api.github.com
+// @connect      raw.githubusercontent.com
+// @updateURL    https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/userscript/ondo-public-relay.user.js
+// @downloadURL  https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/userscript/ondo-public-relay.user.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM.getValue
 // @grant        GM.setValue
@@ -15,9 +17,9 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.2.0';
-  const COMMAND_API_URL = 'https://api.github.com/repos/Ondo-Control/ondo-mistral-control-relay/contents/relay/command.enc.json?ref=main';
-  const POLL_MS = 2500;
+  const VERSION = '0.3.0';
+  const COMMAND_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/command.enc.json';
+  const POLL_MS = 5000;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
   const PUBLIC_JWK_KEY = 'ondo.public.relay.public-jwk.v1';
   const SEEN_KEY = 'ondo.public.relay.seen.v1';
@@ -149,23 +151,24 @@
   async function fetchEnvelope() {
     const r = await gmRequest({
       method: 'GET',
-      url: `${COMMAND_API_URL}&t=${Date.now()}`,
+      url: `${COMMAND_URL}?ondo_ts=${Date.now()}`,
       headers: {
-        'accept': 'application/vnd.github+json',
-        'cache-control': 'no-cache',
+        'cache-control': 'no-cache, no-store, max-age=0',
+        'pragma': 'no-cache',
       },
     });
-    if (r.status < 200 || r.status >= 300) throw new Error(`relay_http_${r.status}`);
+    if (r.status < 200 || r.status >= 300) throw new Error(`relay_raw_http_${r.status}`);
 
-    const meta = JSON.parse(r.responseText || r.response || '{}');
-    if (meta.encoding !== 'base64' || typeof meta.content !== 'string') {
-      throw new Error('relay_content_encoding');
+    const text = String(r.responseText || r.response || '').trim();
+    if (!text) throw new Error('relay_raw_empty');
+    const envelope = JSON.parse(text);
+
+    if (envelope.schema === 'ondo.mistral.relay.empty.v1') {
+      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · raw-ok · leer`);
+      return null;
     }
 
-    const raw = atob(meta.content.replace(/\s+/g, ''));
-    const bytes = Uint8Array.from(raw, (c) => c.charCodeAt(0));
-    const envelope = JSON.parse(new TextDecoder().decode(bytes));
-    if (envelope.schema === 'ondo.mistral.relay.empty.v1') return null;
+    showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · raw-ok · ${clip(envelope.command_id || 'ohne-id', 36)}`);
     return envelope;
   }
 
