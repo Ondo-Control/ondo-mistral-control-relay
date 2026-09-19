@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.3.0
+// @version      0.4.0
 // @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via public GitHub Raw transport.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
@@ -17,8 +17,8 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.3.0';
-  const COMMAND_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/command.enc.json';
+  const VERSION = '0.4.0';
+  const SLOT_BASE_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/slots';
   const POLL_MS = 5000;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
   const PUBLIC_JWK_KEY = 'ondo.public.relay.public-jwk.v1';
@@ -148,28 +148,38 @@
     });
   }
 
-  async function fetchEnvelope() {
+  function slotName(offsetMinutes = 0) {
+    const d = new Date(Date.now() + offsetMinutes * 60000);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}.enc.json`;
+  }
+
+  async function fetchOneSlot(name) {
     const r = await gmRequest({
       method: 'GET',
-      url: `${COMMAND_URL}?ondo_ts=${Date.now()}`,
+      url: `${SLOT_BASE_URL}/${name}?ondo_ts=${Date.now()}`,
       headers: {
         'cache-control': 'no-cache, no-store, max-age=0',
         'pragma': 'no-cache',
       },
     });
-    if (r.status < 200 || r.status >= 300) throw new Error(`relay_raw_http_${r.status}`);
-
+    if (r.status === 404) return null;
+    if (r.status < 200 || r.status >= 300) throw new Error(`relay_slot_http_${r.status}`);
     const text = String(r.responseText || r.response || '').trim();
-    if (!text) throw new Error('relay_raw_empty');
-    const envelope = JSON.parse(text);
+    if (!text) throw new Error('relay_slot_empty');
+    return JSON.parse(text);
+  }
 
-    if (envelope.schema === 'ondo.mistral.relay.empty.v1') {
-      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · raw-ok · leer`);
-      return null;
+  async function fetchEnvelope() {
+    for (const offset of [0, -1, -2]) {
+      const name = slotName(offset);
+      const envelope = await fetchOneSlot(name);
+      if (!envelope) continue;
+      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · slot-ok · ${clip(envelope.command_id || name, 36)}`);
+      return envelope;
     }
-
-    showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · raw-ok · ${clip(envelope.command_id || 'ohne-id', 36)}`);
-    return envelope;
+    showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · slot-none`);
+    return null;
   }
 
   async function seenList() {
