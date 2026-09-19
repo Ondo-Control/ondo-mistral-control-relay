@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.4.0
+// @version      0.4.1
 // @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via public GitHub Raw transport.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
@@ -17,7 +17,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.4.0';
+  const VERSION = '0.4.1';
   const SLOT_BASE_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/slots';
   const POLL_MS = 5000;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
@@ -352,12 +352,17 @@
     for (;;) {
       try {
         const envelope = await fetchEnvelope();
-        if (envelope && !(await seenList()).includes(envelope.command_id)) {
-          showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · empfangen · ${clip(envelope.command_id, 36)}`, keyState.publicJwk, keyState.keyId);
-          const command = await decryptCommand(envelope, keyState.privateKey, keyState.keyId);
-          await markSeen(command.command_id);
-          const stage = await execute(command);
-          showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · ${stage} · ${clip(command.command_id, 36)}`, keyState.publicJwk, keyState.keyId);
+        if (envelope) {
+          const seen = await seenList();
+          if (seen.includes(envelope.command_id)) {
+            showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · seen · ${clip(envelope.command_id, 36)}`, keyState.publicJwk, keyState.keyId);
+          } else {
+            showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · empfangen · ${clip(envelope.command_id, 36)}`, keyState.publicJwk, keyState.keyId);
+            const command = await decryptCommand(envelope, keyState.privateKey, keyState.keyId);
+            const stage = await execute(command);
+            await markSeen(command.command_id);
+            showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · ${stage} · ${clip(command.command_id, 36)}`, keyState.publicJwk, keyState.keyId);
+          }
         }
       } catch (error) {
         const message = clip(error?.message || error, 120);
