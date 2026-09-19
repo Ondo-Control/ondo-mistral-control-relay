@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.8.0
+// @version      0.8.1
 // @description  Decrypts encrypted relay commands via GitHub commit feed and immutable commit-pinned Raw URLs.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
@@ -18,7 +18,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.8.0';
+  const VERSION = '0.8.1';
   const COMMITS_FEED_URL = 'https://github.com/Ondo-Control/ondo-mistral-control-relay/commits/main.atom';
   const COMMAND_PATH = 'relay/command.enc.json';
   const RAW_REPO_BASE = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay';
@@ -345,7 +345,6 @@
 
     if (command.target?.origin !== 'https://chat.mistral.ai') throw new Error('origin_not_authorized');
     if (location.origin !== 'https://chat.mistral.ai') throw new Error('wrong_page_origin');
-    if (document.visibilityState !== 'visible') throw new Error('controller_tab_not_visible');
 
     if (command.action === 'visual_actions') {
       return await dispatchVisualCommand(command);
