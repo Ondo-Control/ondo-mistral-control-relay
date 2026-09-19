@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>ONDO Visual Control</title>
+  <style>
+    body{font:14px/1.45 system-ui,sans-serif;margin:18px;max-width:1100px}
+    h1{font-size:20px}
+    #status{font-weight:700}
+    pre{white-space:pre-wrap;word-break:break-word;border:1px solid #bbb;border-radius:8px;padding:12px;max-height:70vh;overflow:auto}
+    code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  </style>
+</head>
+<body>
+  <h1>ONDO Visual Control</h1>
+  <p id="status" role="status">READY</p>
+  <p>Controller: <code>same-page hash → trusted web page → Opera extension → CDP</code></p>
+  <pre id="result" aria-live="polite">No command yet.</pre>
+<script>
+(() => {
+  'use strict';
+
+  const VERSION = '0.1.0';
+  const EXTENSION_ID = 'fmbicfdobolfcapcgcnedjialaocgdod';
+  const statusEl = document.getElementById('status');
+  const resultEl = document.getElementById('result');
+
+  function render(label, value) {
+    statusEl.textContent = label;
+    resultEl.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+  }
+
+  function fromB64url(value) {
+    const raw = String(value || '').replace(/-/g, '+').replace(/_/g, '/');
+    const padded = raw + '='.repeat((4 - raw.length % 4) % 4);
+    const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+
+  function numberIfPresent(params, name) {
+    const raw = params.get(name);
+    if (raw === null || raw === '') return undefined;
+    const value = Number(raw);
+    if (!Number.isFinite(value)) throw new Error('invalid ' + name);
+    return value;
+  }
+
+  function simpleCommand(params) {
+    const op = params.get('op');
+    if (!op) return null;
+
+    const action = { op };
+    for (const name of ['x','y','dx','dy','wait_ms','steps']) {
+      const value = numberIfPresent(params, name);
+      if (value !== undefined) action[name] = value;
+    }
+
+    if (params.has('key')) action.key = params.get('key');
+    if (params.has('value')) action.value = params.get('value');
+    if (params.has('text_value')) action.text = params.get('text_value');
+
+    const target = {};
+    if (params.has('target_text')) target.text = params.get('target_text');
+    if (params.has('target_aria')) target.aria_label = params.get('target_aria');
+    if (params.has('target_role')) target.role = params.get('target_role');
+    if (params.has('target_placeholder')) target.placeholder = params.get('target_placeholder');
+    if (params.has('target_selector')) target.selector = params.get('target_selector');
+    if (Object.keys(target).length) action.target = target;
+
+    return {
+      schema: 'ondo.visual.command.v1',
+      command_id: params.get('id') || ('local-' + Date.now()),
+      action,
+      readback: params.get('readback') !== '0'
+    };
+  }
+
+  function decodeCommand(params) {
+    if (params.has('cmd')) return JSON.parse(fromB64url(params.get('cmd')));
+    if (params.has('json')) return JSON.parse(params.get('json'));
+    return simpleCommand(params);
+  }
+
+  async function send(command) {
+    if (!globalThis.chrome?.runtime?.sendMessage) {
+      throw new Error('Chrome/Opera extension messaging is unavailable on this page.');
+    }
+    return chrome.runtime.sendMessage(EXTENSION_ID, {
+      type: 'ONDO_VISUAL_COMMAND',
+      command
+    });
+  }
+
+  async function executeFromHash() {
+    const rawHash = location.hash.startsWith('#') ? location.hash.slice(1) : location.hash;
+    const params = new URLSearchParams(rawHash);
+
+    if (!rawHash) {
+      render('READY', {
+        ok: true,
+        version: VERSION,
+        extension_id: EXTENSION_ID,
+        examples: [
+          '#op=observe',
+          '#op=click&x=200&y=400',
+          '#op=click&target_text=Neues+Projekt',
+          '#op=key&key=Escape',
+          '#op=scroll&dy=600',
+          '#op=replace_text&target_aria=Beschreibung&value=Neuer+Text'
+        ]
+      });
+      return;
+    }
+
+    let command;
+    try {
+      command = decodeCommand(params);
+      if (!command) throw new Error('missing command');
+      if (!command.command_id) command.command_id = 'local-' + Date.now();
+      history.replaceState(null, '', location.pathname);
+    } catch (error) {
+      render('INVALID COMMAND', {
+        ok: false,
+        error: 'INVALID_HASH_COMMAND',
+        detail: String(error?.message || error)
+      });
+      return;
+    }
+
+    render('RUNNING ' + command.command_id, { command_id: command.command_id });
+    const started = performance.now();
+
+    try {
+      const response = await send(command);
+      render(
+        response?.ok ? ('DONE ' + command.command_id) : ('FAILED ' + command.command_id),
+        {
+          controller_roundtrip_ms: Math.round(performance.now() - started),
+          ...response
+        }
+      );
+    } catch (error) {
+      render('FAILED ' + command.command_id, {
+        ok: false,
+        error: 'EXTENSION_MESSAGE_FAILED',
+        detail: String(error?.message || error),
+        controller_roundtrip_ms: Math.round(performance.now() - started)
+      });
+    }
+  }
+
+  addEventListener('hashchange', executeFromHash);
+  executeFromHash();
+})();
+</script>
+</body>
+</html>
