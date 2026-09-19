@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.4.1
+// @version      0.5.0
 // @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via public GitHub Raw transport.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
@@ -17,7 +17,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.4.1';
+  const VERSION = '0.5.0';
   const SLOT_BASE_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/slots';
   const POLL_MS = 5000;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
@@ -148,37 +148,28 @@
     });
   }
 
-  function slotName(offsetMinutes = 0) {
-    const d = new Date(Date.now() + offsetMinutes * 60000);
-    const pad = (n) => String(n).padStart(2, '0');
-    return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}.enc.json`;
-  }
-
   async function fetchOneSlot(name) {
     const r = await gmRequest({
       method: 'GET',
       url: `${SLOT_BASE_URL}/${name}?ondo_ts=${Date.now()}`,
-      headers: {
-        'cache-control': 'no-cache, no-store, max-age=0',
-        'pragma': 'no-cache',
-      },
+      headers: {'cache-control':'no-cache, no-store, max-age=0','pragma':'no-cache'},
     });
     if (r.status === 404) return null;
     if (r.status < 200 || r.status >= 300) throw new Error(`relay_slot_http_${r.status}`);
-    const text = String(r.responseText || r.response || '').trim();
-    if (!text) throw new Error('relay_slot_empty');
-    return JSON.parse(text);
+    const body = String(r.responseText || r.response || '').trim();
+    if (!body) return null;
+    return JSON.parse(body);
   }
 
   async function fetchEnvelope() {
-    for (const offset of [0, -1, -2]) {
-      const name = slotName(offset);
+    const seen = await seenList();
+    for (const name of ['slot-0.enc.json','slot-1.enc.json','slot-2.enc.json','slot-3.enc.json','slot-4.enc.json']) {
       const envelope = await fetchOneSlot(name);
-      if (!envelope) continue;
-      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · slot-ok · ${clip(envelope.command_id || name, 36)}`);
+      if (!envelope || !envelope.command_id || seen.includes(envelope.command_id)) continue;
+      showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · slot-ok · ${clip(envelope.command_id,36)}`);
       return envelope;
     }
-    showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · slot-none`);
+    showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · idle`);
     return null;
   }
 
