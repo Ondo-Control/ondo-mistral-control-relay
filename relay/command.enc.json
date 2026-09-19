@@ -1,10 +1,4 @@
 {
-  "schema": "ondo.mistral.relay.encrypted-command.v1",
-  "alg": "RSA-OAEP-256+A256GCM",
-  "recipient_key_id": "4x308fr0vNeo6eby2rtBeltmetvSvTlCWSwxl0MaJxo",
-  "command_id": "relay-inspect-20260919-02",
-  "expires_at": "2026-09-19T09:00:00Z",
-  "wrapped_key": "AdPXJC1Gkga7RCZKR4BF0XYf0gIuS1N1Wn8fgceFCmI_Ce5G_ajs7JsAH8rhd7rELZigR0gXkuUMWs31GgPJa289zOqYZ8sSD0YB0HvdlOmQkCFsCAMKi7QeYCYtTSVnBBbWaf9pqwLa0N2g5GIowr7FzRhbSLActULnrhzBXAwbqEVePtQC0FCzeorm4i0Pe9c6BlP4qqoSt8E30bgq9BJa62Z1yP076hK-6Ib_mThfH5ovOxKWPCOdPZKiiaIT47JnjLmQJguXyOmnIvv7gLxMwMwil46jZpTnFX78O7E2VIIsT-khX5-OPBXhzdGFdoAk_YehdrQ2mG9KnBynJhQJ6ZhZ39eFmUkTkbkcZO6E3gZaoezdo__8BQLaODSeBdexhpMR-81Urx-BwvESDTxAA1_Jp7RS_iDLQLENyoMExLo_Lv1LHHDagx-MraRRmqJ351_torqB2ypG6v-MwLhis-b8-KNjo-48WQWa6lxJnwMdbFCI62SVYI0-5ipu",
-  "iv": "Ku2UFib3mzI1-Gub",
-  "ciphertext": "Yy78NpRx9cbe2dwLGh_rzWhdkfjknnbafgMGGPMPR3TfBf6Lh_gUQdcuyTA99ubJkU_BZkk3sfZVawSQ8595LrM1UtNTasu5djPjzkbodJt9tck1okv2-XH7rCY8KyG1r52DU9fI2Lc5VDvj2FGh3cnUmoSityuagADcCeb_QyE49-vbS2ADtFTS_FaRrjx_3edlQM_ikBX71scroYHrZHK1Zl02XhHOyVMOI1UYoKP0DMUp2dvLMN6mxjP1TmNRvXX3C7K6nvhZzhZSN_DDokXlGHrjbK3JNseRyQ"
+  "schema": "ondo.mistral.relay.empty.v1",
+  "state": "empty"
 }
