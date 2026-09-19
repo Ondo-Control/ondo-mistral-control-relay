@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.7.0
+// @version      0.8.0
 // @description  Decrypts encrypted relay commands via GitHub commit feed and immutable commit-pinned Raw URLs.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
@@ -18,11 +18,11 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.7.0';
+  const VERSION = '0.8.0';
   const COMMITS_FEED_URL = 'https://github.com/Ondo-Control/ondo-mistral-control-relay/commits/main.atom';
   const COMMAND_PATH = 'relay/command.enc.json';
   const RAW_REPO_BASE = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay';
-  const POLL_MS = 5000;
+  const POLL_MS = 1000;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
   const PUBLIC_JWK_KEY = 'ondo.public.relay.public-jwk.v1';
   const SEEN_KEY = 'ondo.public.relay.seen.v1';
@@ -119,16 +119,9 @@
     }
   }
 
-  try {
-    const u = new URL(location.href);
-    if (u.searchParams.get('ondo_controller') !== '1') {
-      showMarker('idle', `ONDO Public Relay geladen · Aktivierung fehlt · v${VERSION}`);
-      return;
-    }
-  } catch {
-    showMarker('error', `ONDO Public Relay URL-Fehler · v${VERSION}`);
-    return;
-  }
+  // v0.8: no query-string activation is required. Commands are accepted only
+  // while this Mistral tab is actually visible, keeping the relay aligned with
+  // the visible-only controller policy.
 
   function gmRequest(details) {
     return new Promise((resolve, reject) => {
@@ -310,6 +303,41 @@
     return /(^|\b)(send|senden|abschicken)(\b|$)/i.test(haystack);
   }
 
+
+  function utf8ToB64url(value) {
+    const bytes = new TextEncoder().encode(String(value));
+    return bytesToB64url(bytes);
+  }
+
+  async function dispatchVisualCommand(command) {
+    if (command.safety?.allow_visual !== true) throw new Error('visual_not_authorized');
+    if (!Array.isArray(command.actions) || command.actions.length < 1 || command.actions.length > 30) {
+      throw new Error('invalid_visual_actions');
+    }
+
+    const payload = {
+      schema: 'ondo.visual.command.v1',
+      command_id: command.command_id,
+      actions: command.actions,
+      readback: command.readback === true
+    };
+
+    const marker = () => document.getElementById('ondo-visual-control-marker');
+    const encoded = utf8ToB64url(JSON.stringify(payload));
+    location.hash = `ondo_vc=1&cmd=${encoded}`;
+
+    const deadline = Date.now() + 6000;
+    while (Date.now() < deadline) {
+      const aria = marker()?.getAttribute('aria-label') || '';
+      if (aria.includes(command.command_id)) {
+        if (aria.includes('"state":"error"')) throw new Error('visual_control_error');
+        if (aria.includes('"state":"ready"') && aria.includes('"ok":true')) return 'visual-executed';
+      }
+      await sleep(50);
+    }
+    throw new Error('visual_control_timeout');
+  }
+
   async function execute(command) {
     if (!command || typeof command.command_id !== 'string' || typeof command.action !== 'string') {
       throw new Error('invalid_command');
@@ -317,6 +345,11 @@
 
     if (command.target?.origin !== 'https://chat.mistral.ai') throw new Error('origin_not_authorized');
     if (location.origin !== 'https://chat.mistral.ai') throw new Error('wrong_page_origin');
+    if (document.visibilityState !== 'visible') throw new Error('controller_tab_not_visible');
+
+    if (command.action === 'visual_actions') {
+      return await dispatchVisualCommand(command);
+    }
 
     if (command.action === 'inspect_page') {
       return 'inspected';
