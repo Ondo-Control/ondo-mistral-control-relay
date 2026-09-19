@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         ONDO Public Mistral Relay
 // @namespace    https://github.com/Ondo-Control/ondo-mistral-control-relay
-// @version      0.1.0
-// @description  Decrypts signed-by-repository encrypted relay commands locally in Opera/Tampermonkey.
+// @version      0.2.0
+// @description  Decrypts encrypted relay commands locally in Opera/Tampermonkey via the GitHub Contents API.
 // @match        https://chat.mistral.ai/*
 // @run-at       document-idle
 // @noframes
-// @connect      raw.githubusercontent.com
+// @connect      api.github.com
 // @grant        GM.xmlHttpRequest
 // @grant        GM.getValue
 // @grant        GM.setValue
@@ -15,8 +15,8 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.1.0';
-  const COMMAND_URL = 'https://raw.githubusercontent.com/Ondo-Control/ondo-mistral-control-relay/main/relay/command.enc.json';
+  const VERSION = '0.2.0';
+  const COMMAND_API_URL = 'https://api.github.com/repos/Ondo-Control/ondo-mistral-control-relay/contents/relay/command.enc.json?ref=main';
   const POLL_MS = 2500;
   const PRIVATE_JWK_KEY = 'ondo.public.relay.private-jwk.v1';
   const PUBLIC_JWK_KEY = 'ondo.public.relay.public-jwk.v1';
@@ -114,6 +114,17 @@
     }
   }
 
+  try {
+    const u = new URL(location.href);
+    if (u.searchParams.get('ondo_controller') !== '1') {
+      showMarker('idle', `ONDO Public Relay geladen · Aktivierung fehlt · v${VERSION}`);
+      return;
+    }
+  } catch {
+    showMarker('error', `ONDO Public Relay URL-Fehler · v${VERSION}`);
+    return;
+  }
+
   function gmRequest(details) {
     return new Promise((resolve, reject) => {
       let settled = false;
@@ -138,11 +149,22 @@
   async function fetchEnvelope() {
     const r = await gmRequest({
       method: 'GET',
-      url: `${COMMAND_URL}?t=${Date.now()}`,
-      headers: { 'cache-control': 'no-cache' },
+      url: `${COMMAND_API_URL}&t=${Date.now()}`,
+      headers: {
+        'accept': 'application/vnd.github+json',
+        'cache-control': 'no-cache',
+      },
     });
     if (r.status < 200 || r.status >= 300) throw new Error(`relay_http_${r.status}`);
-    const envelope = JSON.parse(r.responseText || r.response || '{}');
+
+    const meta = JSON.parse(r.responseText || r.response || '{}');
+    if (meta.encoding !== 'base64' || typeof meta.content !== 'string') {
+      throw new Error('relay_content_encoding');
+    }
+
+    const raw = atob(meta.content.replace(/\\s+/g, ''));
+    const bytes = Uint8Array.from(raw, (c) => c.charCodeAt(0));
+    const envelope = JSON.parse(new TextDecoder().decode(bytes));
     if (envelope.schema === 'ondo.mistral.relay.empty.v1') return null;
     return envelope;
   }
@@ -318,6 +340,7 @@
       try {
         const envelope = await fetchEnvelope();
         if (envelope && !(await seenList()).includes(envelope.command_id)) {
+          showMarker('active', `ONDO Public Relay aktiv · v${VERSION} · empfangen · ${clip(envelope.command_id, 36)}`, keyState.publicJwk, keyState.keyId);
           const command = await decryptCommand(envelope, keyState.privateKey, keyState.keyId);
           await markSeen(command.command_id);
           const stage = await execute(command);
@@ -325,9 +348,12 @@
         }
       } catch (error) {
         const message = clip(error?.message || error, 120);
-        if (!['command_expired', 'recipient_key_mismatch'].includes(message)) {
-          showMarker('error', `ONDO Public Relay Fehler · ${message} · v${VERSION}`, keyState.publicJwk, keyState.keyId);
-        }
+        showMarker(
+          ['command_expired', 'recipient_key_mismatch'].includes(message) ? 'idle' : 'error',
+          `ONDO Public Relay · v${VERSION} · ${message}`,
+          keyState.publicJwk,
+          keyState.keyId
+        );
       }
       await sleep(POLL_MS);
     }
