@@ -1,10 +1,3 @@
 {
-  "schema": "ondo.mistral.relay.encrypted-command.v1",
-  "alg": "RSA-OAEP-256+A256GCM",
-  "recipient_key_id": "4x308fr0vNeo6eby2rtBeltmetvSvTlCWSwxl0MaJxo",
-  "command_id": "ondo-live-click-settings2-20260920T155541Z",
-  "expires_at": "2026-09-20T16:10:41.361390Z",
-  "wrapped_key": "ErmgWgSmqYqsEqDJh6mPdzb-dBOFV7vee_JNbeCTdcUQ6EErrJQfRjVGQyGL-iV34MfU5abVQi6Xk9bLNaQ-LsK3B53Msyv19g8QoDb8VECPwERZlGuq4QK04XHBaNyv1ZW56K_tWy79VM9FhYvkgzV33swKx6mddwkcEeW7MNy0W-Gv4lpeoQLyRCY0-svrSjW89BuIfrmEb6Nug63Ee4DL6j9IfvS8LDPrqfpaYqOUS1H-OkPC59Wmjbm-5yFg7_P5zds-Uyqfvc35c6LRK7JlvYGgZ7k_pz_POoqv2tpYxbZ0uk1CGKaitpRiu09uvqvP46UL07aQuDzhzGhxPdQNf4g24UFgr6y_bVn7PJVjCImyowDHI2w6yvgL5HlTEVTJnfQsQ_abCGWryWyoPMHLwZedZeyjuI-ucdWGYuA9mos6u_DuD9rIsvZePvgMnAo2rNWspnXTCv4jJuyrQBApQ1ac-uULsKfT8_tMqymyzl5lfg0DvJxPXSSSFe8n",
-  "iv": "cNjKHJIXTCZQ2RnX",
-  "ciphertext": "zGFmhRc1fLuSdkxH8bNy6wet2GM5DMh575imt4SdakyMxxZYAlbL-fyxOCCwZ_XoybWnlFplJvglsnQY_74rLN-TmNTRbTwfjClLn6zpqUCM1BNr0WHcoQOaadnApHRpcN7WiYlDkHewiGPb-mPiyg90gxyGgZaRJEFEAwuCFQOPn_fWUwmxpZ0RwJgFfYL81cACkorIerH014AkWJ3jARrGx8oumzAiP-wPQB8tv92LVQBSAUytuwVY9FCrysYmnP1bnBcYmPg59V1K4oDi3Zo_sEkcPKmxQzSFAEZfjeoF4DfnzYaYLMWOfTog0yMzucgrFDXT9c8zmw"
+  "schema": "ondo.mistral.relay.empty.v1"
 }
