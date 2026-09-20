@@ -1,10 +1,3 @@
 {
-  "schema": "ondo.mistral.relay.encrypted-command.v1",
-  "alg": "RSA-OAEP-256+A256GCM",
-  "command_id": "ondo-v011-open-new-project-aria-20260920-1",
-  "recipient_key_id": "4x308fr0vNeo6eby2rtBeltmetvSvTlCWSwxl0MaJxo",
-  "expires_at": "2026-09-20T17:55:24.544421Z",
-  "wrapped_key": "RwAQRSnLbzOyctFQ1gDrMgS4ss1Qv57ptySGf0tE8FPkuia2ulGdy7y1DT3DR_EdoY8tXk-tvytfusDAyuxjejdbNLIEtJyLOAxiB6HuT1sahw-7z4fpjE6LGM53via7KPCSR1u_HCtG2iEc6Y5-9bwkUCWToDJAzXAHy-RlsR9PO09z3b2UXwsslCzsOrbZ4wEYGHYHjAHmBO_HQVRAn0_IEQNzgPDObXTObUjdrQacRvRScOutJvHLeTPKhJ3PDyRuM7qUS6SHBI8QcYTXtLYCHu8QDnqSPAXHsgfaG-_u0QS2GQtrUBFzjH3WHBTpdnnqN4seSjAKkBGUuktJpqkpDpVKKvYIMaGuaUVP-ph0OfpTLUAT_Gppp8ZEZlHwnnV-xfIuoU-C10sq12Yrrr_qDAHSvqIb9YgVI1XL8sK7uMnQLbs1cLjvaSyhnB_dAr4yfRxp_WtL09fER6FjeiLhTDmQ_LGewRIzuRPUQH7vlL9zc-LQY6a0nua8I_Oy",
-  "iv": "FHkGltcjzifoQvNQ",
-  "ciphertext": "ougX9SGwCEHipv6wf9GbrxMsan-c4nR6_mxJj9WAGVHXw4KeQhQFJllaE6MsIn9PVcW9Kr62wRZjzUXfoB8-vRUMLlIGzF20JDWzmuK98Aiz9iG7wZ4Qdq8SfiSyGYjKYH4gQUsmlytWMeaiMneCaBcCIPi6-GLML-wIEvCa4WO4IYw6x5vzFdMqm3e7E86i4HlbEi7-0cwGrCsebv3NfWalhnNcIhCNw60A6EevqfFDAIwBQXghFB67cFqcyP-WlFt7pCR4-eeUv509lTfEcLjFaeWUoNGXa_zFUOr1n7Bb8E_toOimZJRa7soEj5lzVOYRCbWVEE1tfjQPvVoxsOfg2jR_9HT9wZrTkwyFGbd7Feo"
+  "schema": "ondo.mistral.relay.empty.v1"
 }
