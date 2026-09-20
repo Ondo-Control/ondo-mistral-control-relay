@@ -2,9 +2,9 @@
   "schema": "ondo.mistral.relay.encrypted-command.v1",
   "alg": "RSA-OAEP-256+A256GCM",
   "recipient_key_id": "4x308fr0vNeo6eby2rtBeltmetvSvTlCWSwxl0MaJxo",
-  "command_id": "ondo-relay-rekey-inspect-20260920T155243Z",
-  "expires_at": "2026-09-20T16:07:43.178554Z",
-  "wrapped_key": "C9QisUcHkoouQXAzT29Ux_OMIJZ7M4ClfXaZBTMafO7VkLXoN75nOENNNamAVqHEtwEznow5uPMqRyLEvMgTBZJJwqRDpU0fF8Lm_fZ1QDYVNydTth-WRtv0dUp-yQKsCSzg2aIQh5O2RgKwyDb7yKAyQRpvU7yjAjzz-yuVRP4jpj9XBhWIpYHCGEjASd7w6_02_nYg5qHw2NAfwYhTyshFoVpjYjQ1pH5lK4PHigLCmdvOLj5mKqje7Ts_qbSl8U_D5adkvISCjim3GUt4swza18Y4TnmhxoK-gM986KhoCFKNJKpWrhzlbhEMu-zSnlU2wyXTdg-Uadyskhr-bShnrgE3COY3pyXyBS4pcj1AVILzSn5ZAw_kibmFZsv5mVXscfUCnrhxgdPA0g1ccq_ygnr8fbyJXr2IxiPsGv7QlRuTMkbAZopZ73rjBg9pij8LeTun2rrmnE02-K7hKHQN9HTKSK31LORhg-Z-Qd5-IIfxfldNBXP4yItiaJdr",
-  "iv": "i8X_ffkNRB9aY6HY",
-  "ciphertext": "4WBAIssbIfFinfFCJNtF-rhDm-n4YZ7ukjFazQYUfF-wXaa5M4v4Gjn7F3gzG3s5cY5bjNJPKqPJfTVKSmKIO90X33QUWfRJHJL3Y_teyBn54tMSXA4ZIA7gHiYsfParWCClcqZ5k29-WrwcOH7m3Yeq_7HuEPPdJTvgbOt59wD-tHouWCPsL1WNETEliGqS"
+  "command_id": "ondo-live-click-settings-20260920T155417Z",
+  "expires_at": "2026-09-20T16:09:17.523104Z",
+  "wrapped_key": "rhGroRut6BAIy_fKouDC9ielzi-3dHZkv_ZUMUfzEB1L-WpxfEZ3rZeyZ3HkUjNAke-U-8uvxAS7OMVb6YGewjzQgvM2Sj5ggej1AIvGy51QodifB150gUMFL4BpQpZNGHCokf1bN5yPub8_DLBldDoVu-MrxGDPOdXTwpYuYE9N8gXYPlZ6W7wPOnt33RSHnuFwkIK9Il0I6STQX0ECy04MUA01VVWLPDpWb_JiJjYDL-_YOZBTGDtkRw8A15sse4Oc9CyUNsjccE1KJPcBHbKcWs9OnMDn-2XBZWfvAGU_-o5urpd4iE7PtjksF-vIcUrSsHbpoMlR9idnp-fe-5Zhrv_v5A8JCPfaUIUTEeMJLQN2FOkv3LeQyrdH2uFfXH6qN_uY00-Wrmznnfpv4nGMiVW1R_yrLzNYYELkJAFbFiadGEf0Nq8fAryS3dKaxM47zl0MViC7cwxzbsOXKkVAerO33hU2rOpWI0ZbGulm1rCSTe3DfSKELlz1E64F",
+  "iv": "ReXbsYVeVAeob5yF",
+  "ciphertext": "27X07psRGVOXT_qtnMeT9WGQnH0Z_aimSLD8rj7R4dSzlUj8qLRfhy25iGz1Jd71ApowVz6zWMt5LdX2qHmWtNzdAQrX7j_4bW_SL750Pzc53hOHSppIRR2uECObRagEf5xhsquZPYVkKBE0CuT9WoqQfR3p6UegED9pnP_VJOUdIHTYJTFlMj00V0CrJr9CTd3Wob40Ez5Ip-RUBShKZ889lWZ0E1V-EkJkkpb078ma-ctCODsjMtUudUxKSv-qS1xpI1ub2yqDbliA1O1dfoAMyp-hPE8pTlt9K7Oqq6uyKLlfPCoeT9PXXs7LwpxAsqTinnCJ-Mt4"
 }
