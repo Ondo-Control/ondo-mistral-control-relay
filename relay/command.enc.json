@@ -1,10 +1,10 @@
 {
   "schema": "ondo.mistral.relay.encrypted-command.v1",
   "alg": "RSA-OAEP-256+A256GCM",
-  "recipient_key_id": "6Ux5XPI4HqQ64hN4vEnrY4RLimIgsBnTBGCkyFRKhBc",
-  "command_id": "ondo-v031-reload-owner-authorized-mu9rw7me",
-  "expires_at": "2026-09-20T12:23:48.925Z",
-  "wrapped_key": "ENzUYjdyXfV_HLbasbg1oJKldzCY3icfknym4VgmvbYYu5SJ2X-BAAmDvCcFihK9Wvgyzt9Rt-h9HTxZ3n3u7HjK79JRxz7N1PtL8l00rtqIgEwrKELrAbwlsFXqBt-G5-9SMm8MjkUaFXmQ0zt2jV6j4fhHpuFJVNOz579TE8NeeN2-yQFeSVs1SrU4Prlp1pHKNQv-yL3Va8A5V6dpLu6HOV5O6I3YptlJmC7yktOu4V2KnoLCQL5UZtm1j175tiQ7Z7RdWxjELuIEmIjBN71_aulm-9BCmTfy1ex35YC0lU-UrbUDFIQRggVxJyNN9zNSTvEdjO-b6PeslgDt8Bs4vD__fMxmgw3AY29DU8YXWFhJ_H9E36mCm_7vNoryt7DcxIB3cSR4IE_YId9k6W8YY9BqNzzeFnIhoL6pElwFzjiL4J4SdIhiXC80dNFRD1zrepW69vQS4SXczEVhqMjGOf3mxkqqkV-_0Zx-ZZ0MAOJnh2xbzl3debJM_k-C",
-  "iv": "RZbtju4Fji-h435Q",
-  "ciphertext": "wADlCRwM6Hcp5SsQ6yW_eSfElGfDDkh8t_Qxt7lQ3yjdtYxQM-S9-wslOHYVLXQezclbofat1ZS3m_Tn9UXWn0tRey2kZsZDsiUtkTuwBHgIym7-XiMf9Rg_UYBuKtuybCvtD0yRZ_3gg1a-mSAxDfy0pFhwb6_XmfRO9yt6kpZ5YIQEZfG_KHolMeniGNdQ016oM3uxqO4ugD9sV6bfOEoGr2Rk7K-83Hov2h66doduUCv3e3lk_DB_ZQj1jp_SwL5g7TRFFu7k0HLnfVXwvLdKg2FOF-2yuqh6PUXn7-dL1HQScFDO_Zpzpv3OnXP3cOuHsbnXpBYPSfNOizd6g372fx4g69AVXLCh5N4mBX6IK0eePiKywVieGc-DL9fRRuiNhfNWSBoOby1r26BZZRHWUBt5z-LridNmomdzwzpTJCPRNyMhpvnGmYBD1RFQtWXRqo5RUkDfVGSueJlC_-j22L3T-boGaC8A0LiXh-zauvn8VLN6uLALZ70IS141mHnia8xQSMU"
+  "recipient_key_id": "4x308fr0vNeo6eby2rtBeltmetvSvTlCWSwxl0MaJxo",
+  "command_id": "ondo-relay-rekey-inspect-20260920T155243Z",
+  "expires_at": "2026-09-20T16:07:43.178554Z",
+  "wrapped_key": "C9QisUcHkoouQXAzT29Ux_OMIJZ7M4ClfXaZBTMafO7VkLXoN75nOENNNamAVqHEtwEznow5uPMqRyLEvMgTBZJJwqRDpU0fF8Lm_fZ1QDYVNydTth-WRtv0dUp-yQKsCSzg2aIQh5O2RgKwyDb7yKAyQRpvU7yjAjzz-yuVRP4jpj9XBhWIpYHCGEjASd7w6_02_nYg5qHw2NAfwYhTyshFoVpjYjQ1pH5lK4PHigLCmdvOLj5mKqje7Ts_qbSl8U_D5adkvISCjim3GUt4swza18Y4TnmhxoK-gM986KhoCFKNJKpWrhzlbhEMu-zSnlU2wyXTdg-Uadyskhr-bShnrgE3COY3pyXyBS4pcj1AVILzSn5ZAw_kibmFZsv5mVXscfUCnrhxgdPA0g1ccq_ygnr8fbyJXr2IxiPsGv7QlRuTMkbAZopZ73rjBg9pij8LeTun2rrmnE02-K7hKHQN9HTKSK31LORhg-Z-Qd5-IIfxfldNBXP4yItiaJdr",
+  "iv": "i8X_ffkNRB9aY6HY",
+  "ciphertext": "4WBAIssbIfFinfFCJNtF-rhDm-n4YZ7ukjFazQYUfF-wXaa5M4v4Gjn7F3gzG3s5cY5bjNJPKqPJfTVKSmKIO90X33QUWfRJHJL3Y_teyBn54tMSXA4ZIA7gHiYsfParWCClcqZ5k29-WrwcOH7m3Yeq_7HuEPPdJTvgbOt59wD-tHouWCPsL1WNETEliGqS"
 }
