@@ -1,3 +1,10 @@
 {
-  "schema": "ondo.mistral.relay.empty.v1"
+  "schema": "ondo.mistral.relay.encrypted-command.v1",
+  "alg": "RSA-OAEP-256+A256GCM",
+  "recipient_key_id": "4x308fr0vNeo6eby2rtBeltmetvSvTlCWSwxl0MaJxo",
+  "command_id": "ondo-live-click-settings3-20260920T1736",
+  "expires_at": "2026-09-20T16:17:32.730074Z",
+  "wrapped_key": "Hb7gD0fZnPzXTD0jvbBW2SzcN2N4Om1QgVBg-bSSVSi7z1sQz7I9np5vgHKv8urx2dykXSl8cfb7v8hiCQw3POokzuM6zxuG82GJ5pPHv8e0ZCvQMA2frfknl7ckIbI_-lMCmhshgq9-MLVaExdJ7rcMMFPGW7Fd3ptk9T8Y1Tx2yVWDsTnrdA1ekxRPIm86BUZrJVZnWhHWCC525u5VM5kZgABzBG6H0g7SAMeahh_3zvJc5hLlTI4aRRl-PB9p_3Zus_gQOkkzJbpauR4Ebt0_P1XK0D8UxmmcqU6uwEWsDL1GKPHgUlvDvv6V10Aqrpnk8fi2I6Etst8UNI1d9D-BSv7o0_vN0NEIhuteOdweEcfa0yk0y_xqhk6NEgFgtPmuj2iNd647GuwtN4MBrVDg34oFdRNnHXxtQbOuE1ipUwEWwgP-wcCxatbIHfD9pe2o36qZdkDGZdOmuutF6twcoieUXPEglTaQvYFqrV4fjtk0SM7Ha5sX3BbQtwBf",
+  "iv": "aMiqxfDcmWemMquj",
+  "ciphertext": "dqR1WTd1ShrWpY5Nsvfe4SoBJkxv2OZaFwoClEuP8FTjFGRQfvS9jXrb227qB-aaVJaU43nKUxr6Mpr9zL-53PGy4IectSJcTaFbB4BhD3KWaIfK5zecgL4LjtaGZRshbFwesNNWS7V78T4ppvlzvOKhu8NcnTLLgw0IzFyl_IfDTeFdobFgHLErFdoHYyUrRP9sZeYB5m1w2BPFs8w_Ip6-e17wYurCOC9xB0Xx9pQu7dzX86Y3QE8q5CUVf5kQSqqS5af7Lhqkk3rMDEqDegecG8A0yqZSkoWCnfK2YDesqunTp5Y4G4E_menYSybzzxtIq2hdU64--pe7Dwm4NW316gKgzD04cplXOILciw_Urdp1YH5N_kPeSdALMBaLYqpZA_15GS0gmZK6MRfMPONwoSouHCmTuFwEvGJNABgmnlUqIwJxZZwmfwFZ94jeirSG-FexGc2V5U5ZzjLe8D5YNS7amfX7CrE"
 }
